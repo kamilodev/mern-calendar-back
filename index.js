@@ -8,14 +8,8 @@ const app = express()
 //Public Dir
 app.use(express.static('public'));
 
+// Routes
 
-//Routes
-/*app.get('/', (req, res) => {
-    console.log('First Route Installed')
-    res.json({
-        ok: true
-    })
-})*/
 
 // Listeners
 app.listen(process.env.PORT, () => {
