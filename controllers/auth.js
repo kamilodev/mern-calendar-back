@@ -35,3 +35,6 @@ module.exports = {
 	loginUser,
 	renewToken,
 }
+
+// db user: mern_user
+// db pass: IjtndSI061n3o8F9
