@@ -7,6 +7,8 @@ const { createUser, loginUser, renewToken } = require('../controllers/auth')
 const { check } = require('express-validator')
 
 const { Router } = require('express')
+const { fieldValidator } = require('../middlewares/field-validator')
+
 const router = Router()
 
 router.post(
@@ -19,6 +21,7 @@ router.post(
 			'password',
 			'Password minimum length must be at least 8 characters',
 		).isLength({ min: 8 }),
+		fieldValidator,
 	],
 	createUser,
 )
@@ -32,6 +35,7 @@ router.post(
 			'password',
 			'Password minimum length must be at least 8 characters',
 		).isLength({ min: 8 }),
+		fieldValidator,
 	],
 	loginUser,
 )
