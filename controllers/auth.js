@@ -1,13 +1,14 @@
 const { response } = require('express')
 const bcrypt = require('bcryptjs')
 const User = require('../models/User')
+const { generateJWT } = require('../helpers/jwt')
 
-const createUser = async(req, res = response) => {
+const createUser = async (req, res = response) => {
 	const { email, password } = req.body
 	try {
-		let user = await User.findOne({email})
+		let user = await User.findOne({ email })
 		if (user) {
-			res.status(400).json({
+			return res.status(400).json({
 				ok: false,
 				msg: 'Email user registered in dataBase',
 			})
@@ -21,27 +22,31 @@ const createUser = async(req, res = response) => {
 
 		await user.save()
 
+		// Generate JWT
+		const token = await generateJWT(user.id, user.name)
+
 		res.status(201).json({
 			ok: true,
 			uid: user.id,
 			name: user.name,
+			token: token,
 		})
-
 	} catch (error) {
+		console.log(error)
 		res.status(500).json({
 			ok: false,
-			msg: 'Contact with admin dataBase'
+			msg: 'Contact with administrator dataBase',
 		})
 	}
 }
 
-const loginUser = async(req, res = response) => {
+const loginUser = async (req, res = response) => {
 	const { email, password } = req.body
 
 	try {
-		let user = await User.findOne({email})
+		let user = await User.findOne({ email })
 		if (!user) {
-			res.status(400).json({
+			return res.status(400).json({
 				ok: false,
 				msg: 'Wrong user or email',
 			})
@@ -50,23 +55,27 @@ const loginUser = async(req, res = response) => {
 		// Confirm Password
 		const validPassword = bcrypt.compareSync(password, user.password)
 
-		if( !validPassword ) {
+		if (!validPassword) {
 			return res.status(400).json({
 				ok: false,
 				msg: 'Wrong user or email',
 			})
 		}
 
+		// Generate JWT
+		const token = await generateJWT(user.id, user.name)
+
 		res.json({
 			ok: true,
 			uid: user.id,
 			name: user.name,
+			token: token,
 		})
 	} catch (error) {
 		console.log(error)
 		res.status(500).json({
 			ok: false,
-			msg: 'Contact with admin database'
+			msg: 'Contact with admin database!',
 		})
 	}
 }
