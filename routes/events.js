@@ -26,9 +26,27 @@ router.post(
 )
 
 // UPDATE
-router.put('/:id', updateEvent)
+router.put(
+	'/:id',
+	[
+		check('title', 'You should be enter a title').not().isEmpty(),
+		check('start', 'Start date is mandatory').custom(isDate),
+		check('end', 'End date is mandatory').custom(isDate),
+	],
+	fieldValidator,
+	updateEvent,
+)
 
 // DELETE
-router.delete('/:id', deleteEvent)
+router.delete(
+	'/:id',
+	[
+		check('title', 'You should be enter a title').not().isEmpty(),
+		check('start', 'Start date is mandatory').custom(isDate),
+		check('end', 'End date is mandatory').custom(isDate),
+	],
+	fieldValidator,
+	deleteEvent,
+)
 
 module.exports = router
