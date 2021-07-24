@@ -12,6 +12,7 @@ const createEvent = async (req, res = response) => {
 	const event = new Event(req.body)
 
 	try {
+		event.user = req.uid
 		const eventSaved = await event.save()
 		res.json({
 			ok: true,
