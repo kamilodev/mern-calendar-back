@@ -43,7 +43,7 @@ const updateEvent = async (req, res = response) => {
 			const event = await Event.findById(eventId)
 
 			if (!event) {
-				res.status(404).json({
+				return res.status(404).json({
 					ok: false,
 					msg: 'This event dont exist whith current Id',
 				})
@@ -77,11 +77,46 @@ const updateEvent = async (req, res = response) => {
 	}
 }
 
-const deleteEvent = (req, res = response) => {
-	res.json({
-		ok: true,
-		msg: 'deleteEvent',
-	})
+const deleteEvent = async (req, res = response) => {
+	const eventId = req.params.id
+	const uid = req.uid
+
+	if (eventId.length < 24 || eventId.length > 24) {
+		return res.status(400).json({
+			ok: false,
+			msg: 'Id event must be between 24 characters',
+		})
+	} else {
+		try {
+			const event = await Event.findById(eventId)
+
+			if (!event) {
+				res.status(404).json({
+					ok: false,
+					msg: 'This event dont exist whith current Id',
+				})
+			}
+
+			if (event.user.toString() !== uid) {
+				return res.status(400).json({
+					ok: false,
+					msg: 'You dont have permission to edit this event',
+				})
+			}
+
+			await Event.findByIdAndDelete(eventId)
+
+			res.json({
+				ok: true,
+			})
+		} catch (error) {
+			console.log(error)
+			res.status(500).json({
+				ok: false,
+				msg: 'Contact with administrator',
+			})
+		}
+	}
 }
 
 module.exports = {

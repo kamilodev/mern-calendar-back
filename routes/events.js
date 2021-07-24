@@ -38,15 +38,6 @@ router.put(
 )
 
 // DELETE
-router.delete(
-	'/:id',
-	[
-		check('title', 'You should be enter a title').not().isEmpty(),
-		check('start', 'Start date is mandatory').custom(isDate),
-		check('end', 'End date is mandatory').custom(isDate),
-	],
-	fieldValidator,
-	deleteEvent,
-)
+router.delete('/:id', deleteEvent)
 
 module.exports = router
